@@ -7,6 +7,8 @@ This project is based on Ros2 Jazzy and Gazebo Harmonic
 
 Also this is a project by a newbie so there might be some issues. Please feel free to use this project
 
+NOTE: This code was made and used in UBUNTU 24.04 so it can also have issues being used in other distros most likely you can use a docker or just use UBUNTU 24.04 to play safe
+
 
 ## Features
 - 18-DOF Hexapod (coxa, femur, tibia joints)
