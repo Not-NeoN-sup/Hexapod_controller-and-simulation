@@ -1,0 +1,42 @@
+[0.008s] Invoking command in '/home/gautam/hexapod_ws/src/hexapod_ws/build/hexapod_ws': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/gautam/hexapod_ws/src/hexapod_ws/build/hexapod_ws -- -j16 -l16
+[0.030s] -- Found ament_cmake: 2.5.4 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.197s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.203s] -- Found xacro: 2.1.1 (/opt/ros/jazzy/share/xacro/cmake)
+[0.203s] -- Found rclpy: 7.1.5 (/opt/ros/jazzy/share/rclpy/cmake)
+[0.203s] -- Found robot_state_publisher: 3.3.3 (/opt/ros/jazzy/share/robot_state_publisher/cmake)
+[0.226s] -- Found rosidl_generator_c: 4.6.6 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+[0.234s] -- Found rosidl_generator_cpp: 4.6.6 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+[0.244s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.255s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.313s] -- Found rmw_implementation_cmake: 7.3.2 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+[0.314s] -- Found rmw_fastrtps_cpp: 8.4.3 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+[0.373s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[0.552s] -- Found rviz2: 14.1.16 (/opt/ros/jazzy/share/rviz2/cmake)
+[0.618s] -- Configuring done (0.6s)
+[0.621s] -- Generating done (0.0s)
+[0.623s] -- Build files have been written to: /home/gautam/hexapod_ws/src/hexapod_ws/build/hexapod_ws
+[0.648s] Invoked command in '/home/gautam/hexapod_ws/src/hexapod_ws/build/hexapod_ws' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/gautam/hexapod_ws/src/hexapod_ws/build/hexapod_ws -- -j16 -l16
+[0.656s] Invoking command in '/home/gautam/hexapod_ws/src/hexapod_ws/build/hexapod_ws': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/gautam/hexapod_ws/src/hexapod_ws/build/hexapod_ws
+[0.664s] -- Install configuration: ""
+[0.665s] -- Execute custom install script
+[0.665s] -- Up-to-date symlink: /home/gautam/hexapod_ws/src/hexapod_ws/install/hexapod_ws/share/hexapod_ws/description/hexapod.urdf.xacro
+[0.665s] -- Up-to-date symlink: /home/gautam/hexapod_ws/src/hexapod_ws/install/hexapod_ws/share/hexapod_ws/config/parameters.yaml
+[0.665s] -- Symlinking: /home/gautam/hexapod_ws/src/hexapod_ws/install/hexapod_ws/lib/hexapod_ws/hexapod_runner.py
+[0.672s] -- Symlinking: /home/gautam/hexapod_ws/src/hexapod_ws/install/hexapod_ws/share/hexapod_ws/launch/display.launch.py
+[0.681s] -- Symlinking: /home/gautam/hexapod_ws/src/hexapod_ws/install/hexapod_ws/share/hexapod_ws/launch/gazebo.launch.py
+[0.688s] -- Symlinking: /home/gautam/hexapod_ws/src/hexapod_ws/install/hexapod_ws/share/ament_index/resource_index/package_run_dependencies/hexapod_ws
+[0.696s] -- Symlinking: /home/gautam/hexapod_ws/src/hexapod_ws/install/hexapod_ws/share/ament_index/resource_index/parent_prefix_path/hexapod_ws
+[0.703s] -- Symlinking: /home/gautam/hexapod_ws/src/hexapod_ws/install/hexapod_ws/share/hexapod_ws/environment/ament_prefix_path.sh
+[0.712s] -- Symlinking: /home/gautam/hexapod_ws/src/hexapod_ws/install/hexapod_ws/share/hexapod_ws/environment/ament_prefix_path.dsv
+[0.720s] -- Symlinking: /home/gautam/hexapod_ws/src/hexapod_ws/install/hexapod_ws/share/hexapod_ws/environment/path.sh
+[0.727s] -- Symlinking: /home/gautam/hexapod_ws/src/hexapod_ws/install/hexapod_ws/share/hexapod_ws/environment/path.dsv
+[0.735s] -- Symlinking: /home/gautam/hexapod_ws/src/hexapod_ws/install/hexapod_ws/share/hexapod_ws/local_setup.bash
+[0.744s] -- Symlinking: /home/gautam/hexapod_ws/src/hexapod_ws/install/hexapod_ws/share/hexapod_ws/local_setup.sh
+[0.752s] -- Symlinking: /home/gautam/hexapod_ws/src/hexapod_ws/install/hexapod_ws/share/hexapod_ws/local_setup.zsh
+[0.760s] -- Symlinking: /home/gautam/hexapod_ws/src/hexapod_ws/install/hexapod_ws/share/hexapod_ws/local_setup.dsv
+[0.768s] -- Symlinking: /home/gautam/hexapod_ws/src/hexapod_ws/install/hexapod_ws/share/hexapod_ws/package.dsv
+[0.775s] -- Symlinking: /home/gautam/hexapod_ws/src/hexapod_ws/install/hexapod_ws/share/ament_index/resource_index/packages/hexapod_ws
+[0.784s] -- Symlinking: /home/gautam/hexapod_ws/src/hexapod_ws/install/hexapod_ws/share/hexapod_ws/cmake/hexapod_wsConfig.cmake
+[0.792s] -- Symlinking: /home/gautam/hexapod_ws/src/hexapod_ws/install/hexapod_ws/share/hexapod_ws/cmake/hexapod_wsConfig-version.cmake
+[0.800s] -- Symlinking: /home/gautam/hexapod_ws/src/hexapod_ws/install/hexapod_ws/share/hexapod_ws/package.xml
+[0.808s] Invoked command in '/home/gautam/hexapod_ws/src/hexapod_ws/build/hexapod_ws' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/gautam/hexapod_ws/src/hexapod_ws/build/hexapod_ws

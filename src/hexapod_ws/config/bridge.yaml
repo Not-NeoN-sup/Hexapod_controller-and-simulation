@@ -1,0 +1,42 @@
+# IMU
+- ros_topic_name: /imu
+  gz_topic_name: /imu
+  ros_type_name: sensor_msgs/msg/Imu
+  gz_type_name: gz.msgs.IMU
+
+# LiDAR
+- ros_topic_name: /scan
+  gz_topic_name: /scan
+  ros_type_name: sensor_msgs/msg/LaserScan
+  gz_type_name: gz.msgs.LaserScan
+
+# Contact sensors (for each leg)
+- ros_topic_name: /leg_1_foot_contact
+  gz_topic_name: /leg_1_foot_contact
+  ros_type_name: gazebo_msgs/msg/ContactsState
+  gz_type_name: gz.msgs.Contacts
+
+- ros_topic_name: /leg_2_foot_contact
+  gz_topic_name: /leg_2_foot_contact
+  ros_type_name: gazebo_msgs/msg/ContactsState
+  gz_type_name: gz.msgs.Contacts
+
+- ros_topic_name: /leg_3_foot_contact
+  gz_topic_name: /leg_3_foot_contact
+  ros_type_name: gazebo_msgs/msg/ContactsState
+  gz_type_name: gz.msgs.Contacts
+
+- ros_topic_name: /leg_4_foot_contact
+  gz_topic_name: /leg_4_foot_contact
+  ros_type_name: gazebo_msgs/msg/ContactsState
+  gz_type_name: gz.msgs.Contacts
+
+- ros_topic_name: /leg_5_foot_contact
+  gz_topic_name: /leg_5_foot_contact
+  ros_type_name: gazebo_msgs/msg/ContactsState
+  gz_type_name: gz.msgs.Contacts
+
+- ros_topic_name: /leg_6_foot_contact
+  gz_topic_name: /leg_6_foot_contact
+  ros_type_name: gazebo_msgs/msg/ContactsState
+  gz_type_name: gz.msgs.Contacts
