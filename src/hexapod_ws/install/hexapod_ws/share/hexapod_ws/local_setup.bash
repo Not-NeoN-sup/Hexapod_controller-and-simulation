@@ -1,1 +1,0 @@
-/home/gautam/hexapod_ws/src/hexapod_ws/build/hexapod_ws/ament_cmake_environment_hooks/local_setup.bash

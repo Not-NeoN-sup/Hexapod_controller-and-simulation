@@ -1,1 +1,0 @@
-/home/gautam/hexapod_ws/src/hexapod_ws/launch/gazebo.launch.py
