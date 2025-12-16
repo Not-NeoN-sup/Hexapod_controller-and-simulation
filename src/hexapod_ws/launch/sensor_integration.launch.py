@@ -20,7 +20,6 @@ def generate_launch_description():
         executable='parameter_bridge',
         name='gz_sensor_bridge',
         arguments=[
-            # ✅ Time synchronization
             '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
         ],
         output='screen'
