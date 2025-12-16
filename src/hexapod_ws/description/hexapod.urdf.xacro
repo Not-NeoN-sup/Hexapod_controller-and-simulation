@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="hexapod">
-
+  <xacro:include filename="$(find hexapod_ws)/description/hexapod.gazebo"/>
   <!-- Generic properties -->
   <xacro:property name="name_prefix" value=""/>
   <xacro:property name="joint_lower_limit" value="-1.57"/>
@@ -15,9 +15,6 @@
   <xacro:property name="leg_radius" value="0.01"/>
 
   <!-- Base link -->
-  <!-- Solid cylinder, m = 2.5 kg, r = 0.18, h = 0.05
-       Izz = 0.5*m*r^2  ≈ 0.0405
-       Ixx = Iyy = (1/12)*m*(3r^2 + h^2) ≈ 0.02077 -->
   <link name="base_link">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -42,9 +39,7 @@
     </collision>
   </link>
 
-  <!-- IMU Sensor (MPU9250) -->
-  <!-- Approx small box: 0.02 x 0.02 x 0.01 m, m = 0.005 kg
-       Ixx = Iyy ≈ 2.08e-07, Izz ≈ 3.33e-07 -->
+  <!-- IMU Sensor -->
   <link name="imu_link">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -52,13 +47,6 @@
       <inertia ixx="2.08e-07" ixy="0" ixz="0"
                iyy="2.08e-07" iyz="0" izz="3.33e-07"/>
     </inertial>
-    <sensor name="imu_sensor" type="imu">
-      <always_on>true</always_on>
-      <update_rate>50</update_rate>
-      <visualize>true</visualize>
-      <topic>imu</topic>
-      <plugin name="imu_plugin" filename="libgz-sim-imu-system.so"/>
-    </sensor>
   </link>
 
   <joint name="imu_joint" type="fixed">
@@ -67,60 +55,6 @@
     <child link="imu_link"/>
   </joint>
 
-  <!-- LiDAR Sensor (YDLiDAR TG50) -->
-  <!-- Cylinder, r = 0.04, h = 0.05, m = 0.25 kg
-       Izz = 0.5*m*r^2 ≈ 2.0e-04
-       Ixx = Iyy ≈ 1.52e-04 -->
-  <link name="lidar_link">
-    <inertial>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="0.25"/>
-      <inertia ixx="1.52e-04" ixy="0" ixz="0"
-               iyy="1.52e-04" iyz="0" izz="2.0e-04"/>
-    </inertial>
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-        <cylinder radius="0.04" length="0.05"/>
-      </geometry>
-      <material name="black">
-        <color rgba="0.1 0.1 0.1 1.0"/>
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-        <cylinder radius="0.04" length="0.05"/>
-      </geometry>
-    </collision>
-    <sensor name="lidar_sensor" type="gpu_lidar">
-      <update_rate>10</update_rate>
-      <topic>scan</topic>
-      <plugin name="lidar_plugin" filename="libgz-sim-ray-sensor-system.so"/>
-    </sensor>
-  </link>
-
-  <joint name="lidar_joint" type="fixed">
-    <origin xyz="0 0 ${base_height+0.05}" rpy="0 0 0"/>
-    <parent link="base_link"/>
-    <child link="lidar_link"/>
-  </joint>
-
-  <!-- Leg macro: name, hip_origin_xyz, hip_origin_rpy -->
-  <!-- All leg links are modeled as solid cylinders:
-       axis aligned with x in the inertial frame (rpy="0 1.5708 0").
-       For a cylinder of length L, radius r, mass m:
-         Ixx (axis) = 0.5*m*r^2
-         Iyy = Izz = (1/12)*m*(3*r^2 + L^2)
-       Hip:   L=0.05, r=0.01, m=0.10
-              Ixx=5.0e-06, Iyy=Izz≈2.33e-05
-       Femur: L=0.12, r=0.01, m=0.15
-              Ixx=7.5e-06, Iyy=Izz≈1.84e-04
-       Tibia: L=0.18, r=0.01, m=0.12
-              Ixx=6.0e-06, Iyy=Izz≈3.27e-04
-       Foot: solid sphere, r=0.02, m=0.03
-              Ixx=Iyy=Izz = (2/5)*m*r^2 ≈ 4.8e-06
-  -->
   <xacro:macro name="leg" params="leg_name hx hy hz hr hp hyaw">
     
     <!-- hip link -->
@@ -248,12 +182,6 @@
           </friction>
         </surface>
       </collision>
-      <sensor name="${name_prefix}${leg_name}_foot_contact_sensor" type="contact">
-        <always_on>true</always_on>
-        <update_rate>50</update_rate>
-        <topic>${leg_name + '_foot_contact'}</topic>
-        <plugin name="contact_plugin" filename="libgz-sim-contact-system.so"/>
-      </sensor>
     </link>
 
     <joint name="${name_prefix}${leg_name}_foot_joint" type="fixed">
@@ -390,7 +318,6 @@
   <!-- ros2_control plugin for Gazebo Harmonic -->
   <gazebo>
     <plugin name="gz_ros2_control::GazeboSimROS2ControlPlugin" filename="libgz_ros2_control-system.so">
-      <!-- TODO: update this path to match your repo layout -->
       <parameters>$(find hexapod_ws)/config/parameters.yaml</parameters>
     </plugin>
   </gazebo>

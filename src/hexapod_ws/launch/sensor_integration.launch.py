@@ -22,18 +22,6 @@ def generate_launch_description():
         arguments=[
             # ✅ Time synchronization
             '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
-
-            # ✅ Sensors
-            '/imu@sensor_msgs/msg/Imu@gz.msgs.IMU',
-            '/scan@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
-
-            # ✅ Contact sensors (Gazebo → ROS)
-            '/leg_1_foot_contact@gazebo_msgs/msg/ContactsState[gz.msgs.Contacts',
-            '/leg_2_foot_contact@gazebo_msgs/msg/ContactsState[gz.msgs.Contacts',
-            '/leg_3_foot_contact@gazebo_msgs/msg/ContactsState[gz.msgs.Contacts',
-            '/leg_4_foot_contact@gazebo_msgs/msg/ContactsState[gz.msgs.Contacts',
-            '/leg_5_foot_contact@gazebo_msgs/msg/ContactsState[gz.msgs.Contacts',
-            '/leg_6_foot_contact@gazebo_msgs/msg/ContactsState[gz.msgs.Contacts',
         ],
         output='screen'
     )

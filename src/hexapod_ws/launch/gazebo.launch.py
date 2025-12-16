@@ -1,8 +1,9 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
+from launch.actions import ExecuteProcess
 from launch_ros.actions import Node
-from launch.substitutions import PathJoinSubstitution, LaunchConfiguration
-from launch_ros.substitutions import FindPackageShare  # ✅ correct import for Jazzy
+from launch.substitutions import PathJoinSubstitution, Command
+from launch_ros.substitutions import FindPackageShare 
+from launch_ros.parameter_descriptions import ParameterValue # <--- 1. ADDED IMPORT
 
 def generate_launch_description():
 
@@ -16,24 +17,22 @@ def generate_launch_description():
         pkg_share, 'config', 'parameters.yaml'
     ])
 
-    from launch.actions import ExecuteProcess
-
+    # Using the default 'empty.sdf' world as requested.
     gazebo = ExecuteProcess(
         cmd=['gz', 'sim', '-r', 'empty.sdf', '--force-version', '8'],
         output='screen'
     )
-    from launch.substitutions import Command
-
+    
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         parameters=[{
             'use_sim_time': True,
-            'robot_description': Command(['xacro ', urdf_path])
+            # 2. WRAP THE COMMAND OUTPUT as a string
+            'robot_description': ParameterValue(Command(['xacro ', urdf_path]), value_type=str) 
         }],
         output='screen'
     )
-
 
     spawn_entity = Node(
         package='ros_gz_sim',
@@ -47,6 +46,7 @@ def generate_launch_description():
         executable='spawner',
         arguments=['joint_state_broadcaster',
                    '--controller-manager', '/controller_manager'],
+        parameters=[{'use_sim_time': True}], # 3. ADDED use_sim_time
         output='screen'
     )
 
@@ -56,6 +56,7 @@ def generate_launch_description():
         arguments=['hexapod_controller',
                    '--controller-manager', '/controller_manager',
                    '--param-file', parameters_file],
+        parameters=[{'use_sim_time': True}], # 4. ADDED use_sim_time
         output='screen'
     )
 
