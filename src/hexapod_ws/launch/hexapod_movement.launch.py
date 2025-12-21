@@ -29,11 +29,10 @@ def generate_launch_description():
         executable='teleop_hexapod.py',
         name='teleop',
         output='screen',
-        prefix=['xterm ', '-hold ', '-e']
     )
 
     delayed_teleop_node = TimerAction(
-        period=10.0,
+        period=5.0,
         actions=[teleop_node]
     )
 

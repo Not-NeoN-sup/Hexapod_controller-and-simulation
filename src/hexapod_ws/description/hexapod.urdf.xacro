@@ -1,325 +1,208 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="hexapod">
   <xacro:include filename="$(find hexapod_ws)/description/hexapod.gazebo"/>
-  <!-- Generic properties -->
+  
   <xacro:property name="name_prefix" value=""/>
   <xacro:property name="joint_lower_limit" value="-1.57"/>
   <xacro:property name="joint_upper_limit" value="1.57"/>
-
-  <!-- Base parameters -->
   <xacro:property name="base_radius" value="0.18"/>
   <xacro:property name="base_height" value="0.05"/>
   <xacro:property name="hip_length" value="0.05"/>
   <xacro:property name="femur_length" value="0.12"/>
   <xacro:property name="tibia_length" value="0.18"/>
   <xacro:property name="leg_radius" value="0.01"/>
-
-  <!-- Base link -->
+  
+  <link name="base_footprint"/>
+  
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+  
   <link name="base_link">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <mass value="2.5"/>
-      <inertia ixx="0.02077" ixy="0.0" ixz="0.0"
-               iyy="0.02077" iyz="0.0" izz="0.0405"/>
+      <inertia ixx="0.02077" ixy="0.0" ixz="0.0" iyy="0.02077" iyz="0.0" izz="0.0405"/>
     </inertial>
     <visual>
       <origin xyz="0 0 ${base_height/2}" rpy="0 0 0"/>
-      <geometry>
-        <cylinder radius="${base_radius}" length="${base_height}"/>
-      </geometry>
-      <material name="gray">
-        <color rgba="0.6 0.6 0.6 1.0"/>
-      </material>
+      <geometry><cylinder radius="${base_radius}" length="${base_height}"/></geometry>
+      <material name="gray"><color rgba="0.6 0.6 0.6 1.0"/></material>
     </visual>
     <collision>
       <origin xyz="0 0 ${base_height/2}" rpy="0 0 0"/>
-      <geometry>
-        <cylinder radius="${base_radius}" length="${base_height}"/>
-      </geometry>
+      <geometry><cylinder radius="${base_radius}" length="${base_height}"/></geometry>
     </collision>
   </link>
-
-  <!-- IMU Sensor -->
+  
   <link name="imu_link">
+    <visual>
+      <geometry><box size="0.02 0.02 0.02"/></geometry>
+      <material name="white"><color rgba="1 1 1 1"/></material>
+    </visual>
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <mass value="0.005"/>
-      <inertia ixx="2.08e-07" ixy="0" ixz="0"
-               iyy="2.08e-07" iyz="0" izz="3.33e-07"/>
+      <inertia ixx="2.08e-07" ixy="0" ixz="0" iyy="2.08e-07" iyz="0" izz="3.33e-07"/>
     </inertial>
   </link>
-
+  
   <joint name="imu_joint" type="fixed">
     <origin xyz="0 0 ${base_height+0.02}" rpy="0 0 0"/>
     <parent link="base_link"/>
     <child link="imu_link"/>
   </joint>
+  
+  <link name="lidar_link">
+    <visual>
+      <geometry><cylinder radius="0.04" length="0.05"/></geometry>
+      <material name="black"><color rgba="0.1 0.1 0.1 1.0"/></material>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.04" length="0.05"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="1e-4" ixy="0" ixz="0" iyy="1e-4" iyz="0" izz="1e-4"/>
+    </inertial>
+  </link>
+  
+  <joint name="lidar_joint" type="fixed">
+    <origin xyz="0 0 ${base_height+0.05}" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="lidar_link"/>
+  </joint>
 
+  <!-- LEG MACRO -->
   <xacro:macro name="leg" params="leg_name hx hy hz hr hp hyaw">
-    
-    <!-- hip link -->
-    <link name="${name_prefix}${leg_name}_hip_link">
-      <inertial>
-        <origin xyz="${hip_length/2} 0 0" rpy="0 1.5708 0"/>
-        <mass value="0.10"/>
-        <inertia ixx="5.0e-06" ixy="0" ixz="0"
-                 iyy="2.33e-05" iyz="0" izz="2.33e-05"/>
-      </inertial>
+    <!-- Hip Link -->
+    <link name="${leg_name}_hip_link">
       <visual>
-        <origin xyz="${hip_length/2} 0 0" rpy="0 1.5708 0"/>
-        <geometry>
-          <cylinder radius="${leg_radius}" length="${hip_length}"/>
-        </geometry>
-        <material name="black"><color rgba="0.1 0.1 0.1 1.0"/></material>
+        <geometry><cylinder radius="${leg_radius}" length="${hip_length}"/></geometry>
+        <material name="blue"><color rgba="0 0 1 1"/></material>
       </visual>
       <collision>
-        <origin xyz="${hip_length/2} 0 0" rpy="0 1.5708 0"/>
-        <geometry>
-          <cylinder radius="${leg_radius}" length="${hip_length}"/>
-        </geometry>
+        <geometry><cylinder radius="${leg_radius}" length="${hip_length}"/></geometry>
       </collision>
+      <inertial>
+        <mass value="0.1"/>
+        <inertia ixx="2.08e-05" ixy="0" ixz="0" iyy="2.08e-05" iyz="0" izz="5e-07"/>
+      </inertial>
     </link>
 
-    <!-- hip joint -->
-    <joint name="${name_prefix}${leg_name}_hip_joint" type="revolute">
-      <origin xyz="${hx} ${hy} ${hz}" rpy="${hr} ${hp} ${hyaw}"/>
+    <joint name="${leg_name}_hip_joint" type="revolute">
       <parent link="base_link"/>
-      <child link="${name_prefix}${leg_name}_hip_link"/>
+      <child link="${leg_name}_hip_link"/>
+      <origin xyz="${hx} ${hy} ${hz}" rpy="${hr} ${hp} ${hyaw}"/>
       <axis xyz="0 0 1"/>
-      <limit effort="10" velocity="4" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
+      <limit lower="${joint_lower_limit}" upper="${joint_upper_limit}" effort="10" velocity="1.0"/>
     </joint>
 
-    <!-- femur link -->
-    <link name="${name_prefix}${leg_name}_femur_link">
+    <!-- Femur Link -->
+    <link name="${leg_name}_femur_link">
+      <visual>
+        <origin xyz="0 0 ${-femur_length/2}" rpy="0 0 0"/>
+        <geometry><cylinder radius="${leg_radius}" length="${femur_length}"/></geometry>
+        <material name="green"><color rgba="0 1 0 1"/></material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${-femur_length/2}" rpy="0 0 0"/>
+        <geometry><cylinder radius="${leg_radius}" length="${femur_length}"/></geometry>
+      </collision>
       <inertial>
-        <origin xyz="${femur_length/2} 0 0" rpy="0 1.5708 0"/>
+        <origin xyz="0 0 ${-femur_length/2}" rpy="0 0 0"/>
         <mass value="0.15"/>
-        <inertia ixx="7.5e-06" ixy="0" ixz="0"
-                 iyy="1.84e-04" iyz="0" izz="1.84e-04"/>
+        <inertia ixx="1.8e-04" ixy="0" ixz="0" iyy="1.8e-04" iyz="0" izz="1.125e-06"/>
       </inertial>
-      <visual>
-        <origin xyz="${femur_length/2} 0 0" rpy="0 1.5708 0"/>
-        <geometry>
-          <cylinder radius="${leg_radius}" length="${femur_length}"/>
-        </geometry>
-        <material name="red"><color rgba="0.8 0.2 0.2 1.0"/></material>
-      </visual>
-      <collision>
-        <origin xyz="${femur_length/2} 0 0" rpy="0 1.5708 0"/>
-        <geometry>
-          <cylinder radius="${leg_radius}" length="${femur_length}"/>
-        </geometry>
-      </collision>
     </link>
 
-    <!-- femur joint -->
-    <joint name="${name_prefix}${leg_name}_femur_joint" type="revolute">
-      <origin xyz="${hip_length} 0 0" rpy="0 0 0"/>
-      <parent link="${name_prefix}${leg_name}_hip_link"/>
-      <child link="${name_prefix}${leg_name}_femur_link"/>
+    <joint name="${leg_name}_femur_joint" type="revolute">
+      <parent link="${leg_name}_hip_link"/>
+      <child link="${leg_name}_femur_link"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
-      <limit effort="10" velocity="4" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
+      <limit lower="${joint_lower_limit}" upper="${joint_upper_limit}" effort="10" velocity="1.0"/>
     </joint>
 
-    <!-- tibia link -->
-    <link name="${name_prefix}${leg_name}_tibia_link">
+    <!-- Tibia Link -->
+    <link name="${leg_name}_tibia_link">
+      <visual>
+        <origin xyz="0 0 ${-tibia_length/2}" rpy="0 0 0"/>
+        <geometry><cylinder radius="${leg_radius}" length="${tibia_length}"/></geometry>
+        <material name="red"><color rgba="1 0 0 1"/></material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${-tibia_length/2}" rpy="0 0 0"/>
+        <geometry><cylinder radius="${leg_radius}" length="${tibia_length}"/></geometry>
+      </collision>
       <inertial>
-        <origin xyz="${tibia_length/2} 0 0" rpy="0 1.5708 0"/>
+        <origin xyz="0 0 ${-tibia_length/2}" rpy="0 0 0"/>
         <mass value="0.12"/>
-        <inertia ixx="6.0e-06" ixy="0" ixz="0"
-                 iyy="3.27e-04" iyz="0" izz="3.27e-04"/>
+        <inertia ixx="3.24e-04" ixy="0" ixz="0" iyy="3.24e-04" iyz="0" izz="7.2e-07"/>
       </inertial>
-      <visual>
-        <origin xyz="${tibia_length/2} 0 0" rpy="0 1.5708 0"/>
-        <geometry>
-          <cylinder radius="${leg_radius}" length="${tibia_length}"/>
-        </geometry>
-        <material name="blue"><color rgba="0.2 0.2 0.8 1.0"/></material>
-      </visual>
-      <collision>
-        <origin xyz="${tibia_length/2} 0 0" rpy="0 1.5708 0"/>
-        <geometry>
-          <cylinder radius="${leg_radius}" length="${tibia_length}"/>
-        </geometry>
-      </collision>
     </link>
 
-    <!-- tibia joint -->
-    <joint name="${name_prefix}${leg_name}_tibia_joint" type="revolute">
-      <origin xyz="${femur_length} 0 0" rpy="0 0 0"/>
-      <parent link="${name_prefix}${leg_name}_femur_link"/>
-      <child link="${name_prefix}${leg_name}_tibia_link"/>
+    <joint name="${leg_name}_tibia_joint" type="revolute">
+      <parent link="${leg_name}_femur_link"/>
+      <child link="${leg_name}_tibia_link"/>
+      <origin xyz="0 0 ${-femur_length}" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
-      <limit effort="10" velocity="4" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
+      <limit lower="${joint_lower_limit}" upper="${joint_upper_limit}" effort="10" velocity="1.0"/>
     </joint>
-
-    <!-- Foot link with contact sensor -->
-    <link name="${name_prefix}${leg_name}_foot">
-      <inertial>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <mass value="0.03"/>
-        <inertia ixx="4.8e-06" ixy="0" ixz="0"
-                 iyy="4.8e-06" iyz="0" izz="4.8e-06"/>
-      </inertial>
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <sphere radius="0.02"/>
-        </geometry>
-        <material name="black"><color rgba="0.1 0.1 0.1 1.0"/></material>
-      </visual>
-      <collision name="${name_prefix}${leg_name}_foot_collision">
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <sphere radius="0.02"/>
-        </geometry>
-        <surface>
-          <friction>
-            <ode>
-              <mu>1.0</mu>
-              <mu2>1.0</mu2>
-            </ode>
-          </friction>
-        </surface>
-      </collision>
-    </link>
-
-    <joint name="${name_prefix}${leg_name}_foot_joint" type="fixed">
-      <origin xyz="${tibia_length} 0 0" rpy="0 0 0"/>
-      <parent link="${name_prefix}${leg_name}_tibia_link"/>
-      <child link="${name_prefix}${leg_name}_foot"/>
-    </joint>
-
   </xacro:macro>
 
-  <!-- Instantiate six legs around the base -->
-  <xacro:leg leg_name="leg_1" hx="0.18"  hy="0.0"    hz="0.02" hr="0" hp="0" hyaw="0"/>
-  <xacro:leg leg_name="leg_2" hx="0.09"  hy="0.156"  hz="0.02" hr="0" hp="0" hyaw="1.0472"/>
-  <xacro:leg leg_name="leg_3" hx="-0.09" hy="0.156"  hz="0.02" hr="0" hp="0" hyaw="2.0944"/>
-  <xacro:leg leg_name="leg_4" hx="-0.18" hy="0.0"    hz="0.02" hr="0" hp="0" hyaw="3.14159"/>
-  <xacro:leg leg_name="leg_5" hx="-0.09" hy="-0.156" hz="0.02" hr="0" hp="0" hyaw="-2.0944"/>
-  <xacro:leg leg_name="leg_6" hx="0.09"  hy="-0.156" hz="0.02" hr="0" hp="0" hyaw="-1.0472"/>
+  <!-- CREATE 6 LEGS -->
+  <xacro:leg leg_name="leg_1" hx="${base_radius*0.866}" hy="${base_radius*0.5}" hz="${base_height}" hr="0" hp="0" hyaw="0.524"/>
+  <xacro:leg leg_name="leg_2" hx="0" hy="${base_radius}" hz="${base_height}" hr="0" hp="0" hyaw="1.571"/>
+  <xacro:leg leg_name="leg_3" hx="${-base_radius*0.866}" hy="${base_radius*0.5}" hz="${base_height}" hr="0" hp="0" hyaw="2.618"/>
+  <xacro:leg leg_name="leg_4" hx="${-base_radius*0.866}" hy="${-base_radius*0.5}" hz="${base_height}" hr="0" hp="0" hyaw="3.665"/>
+  <xacro:leg leg_name="leg_5" hx="0" hy="${-base_radius}" hz="${base_height}" hr="0" hp="0" hyaw="4.712"/>
+  <xacro:leg leg_name="leg_6" hx="${base_radius*0.866}" hy="${-base_radius*0.5}" hz="${base_height}" hr="0" hp="0" hyaw="5.759"/>
 
-  <!-- ros2_control hardware interface -->
+  <!-- ROS2 CONTROL - GAZEBO HARDWARE INTERFACE -->
   <ros2_control name="HexapodSystem" type="system">
     <hardware>
-      <!-- Using the generic demo hardware plugin for simulation/testing -->
       <plugin>gz_ros2_control/GazeboSimSystem</plugin>
-      <!-- Optional parameters (safe defaults for virtual hardware) -->
-      <param name="example_param_hw_start_duration_sec">0.0</param>
-      <param name="example_param_hw_stop_duration_sec">0.0</param>
-      <param name="example_param_hw_slowdown">1.0</param>
     </hardware>
+    
+    <!-- DEFINE ALL JOINTS -->
+    <xacro:macro name="joint_interface" params="joint_name">
+      <joint name="${joint_name}">
+        <command_interface name="position">
+          <param name="min">${joint_lower_limit}</param>
+          <param name="max">${joint_upper_limit}</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+    </xacro:macro>
 
-    <!-- ========== LEG 1 ========== -->
-    <joint name="leg_1_hip_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="leg_1_femur_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="leg_1_tibia_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-
-    <!-- ========== LEG 2 ========== -->
-    <joint name="leg_2_hip_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="leg_2_femur_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="leg_2_tibia_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-
-    <!-- ========== LEG 3 ========== -->
-    <joint name="leg_3_hip_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="leg_3_femur_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="leg_3_tibia_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-
-    <!-- ========== LEG 4 ========== -->
-    <joint name="leg_4_hip_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="leg_4_femur_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="leg_4_tibia_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-
-    <!-- ========== LEG 5 ========== -->
-    <joint name="leg_5_hip_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="leg_5_femur_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="leg_5_tibia_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-
-    <!-- ========== LEG 6 ========== -->
-    <joint name="leg_6_hip_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="leg_6_femur_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-    <joint name="leg_6_tibia_joint">
-      <command_interface name="position"/>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-    </joint>
-
+    <xacro:joint_interface joint_name="leg_1_hip_joint"/>
+    <xacro:joint_interface joint_name="leg_1_femur_joint"/>
+    <xacro:joint_interface joint_name="leg_1_tibia_joint"/>
+    <xacro:joint_interface joint_name="leg_2_hip_joint"/>
+    <xacro:joint_interface joint_name="leg_2_femur_joint"/>
+    <xacro:joint_interface joint_name="leg_2_tibia_joint"/>
+    <xacro:joint_interface joint_name="leg_3_hip_joint"/>
+    <xacro:joint_interface joint_name="leg_3_femur_joint"/>
+    <xacro:joint_interface joint_name="leg_3_tibia_joint"/>
+    <xacro:joint_interface joint_name="leg_4_hip_joint"/>
+    <xacro:joint_interface joint_name="leg_4_femur_joint"/>
+    <xacro:joint_interface joint_name="leg_4_tibia_joint"/>
+    <xacro:joint_interface joint_name="leg_5_hip_joint"/>
+    <xacro:joint_interface joint_name="leg_5_femur_joint"/>
+    <xacro:joint_interface joint_name="leg_5_tibia_joint"/>
+    <xacro:joint_interface joint_name="leg_6_hip_joint"/>
+    <xacro:joint_interface joint_name="leg_6_femur_joint"/>
+    <xacro:joint_interface joint_name="leg_6_tibia_joint"/>
   </ros2_control>
 
-  <!-- ros2_control plugin for Gazebo Harmonic -->
+  <!-- GAZEBO ROS2 CONTROL PLUGIN -->
   <gazebo>
-    <plugin name="gz_ros2_control::GazeboSimROS2ControlPlugin" filename="libgz_ros2_control-system.so">
+    <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
       <parameters>$(find hexapod_ws)/config/parameters.yaml</parameters>
     </plugin>
   </gazebo>
-
 </robot>
