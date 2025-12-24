@@ -26,7 +26,9 @@ def generate_launch_description():
         output='screen',
         parameters=[{
             'config_file': bridge_config,
-            'expand_gz_topic_names': True 
+            'expand_gz_topic_names': True,
+            'use_sim_time': True,  # CRITICAL: Ensures ROS clock matches Gazebo clock
+            'lazy': False          # Forces the bridge to start immediately
         }]
     )
 

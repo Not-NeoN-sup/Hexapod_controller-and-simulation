@@ -223,13 +223,9 @@
   <xacro:leg leg_name="leg_5" hx="${-base_radius*0.5}" hy="${-base_radius*0.866}" angle="-2.0944"/>
   <xacro:leg leg_name="leg_6" hx="${base_radius*0.5}" hy="${-base_radius*0.866}" angle="-1.0472"/>
 
-  <!-- ROS2 CONTROL -->
   <ros2_control name="HexapodSystem" type="system">
     <hardware>
       <plugin>gz_ros2_control/GazeboSimSystem</plugin>
-      <param name="example_param_hw_start_duration_sec">0.0</param>
-      <param name="example_param_hw_stop_duration_sec">0.0</param>
-      <param name="example_param_hw_slowdown">1.0</param>
     </hardware>
     
     <xacro:macro name="joint_control" params="leg_name">
@@ -258,28 +254,37 @@
     <xacro:joint_control leg_name="leg_6"/>
   </ros2_control>
 
-  <!-- GAZEBO ROS2 CONTROL PLUGIN -->
   <gazebo>
-    <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+    <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
+      <topic>joint_states</topic>
+    </plugin>
+
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
       <parameters>$(find hexapod_ws)/config/parameters.yaml</parameters>
     </plugin>
   </gazebo>
 
-  <!-- GAZEBO SENSOR PLUGINS -->
+  <gazebo reference="imu_joint"><preserveFixedJoint>true</preserveFixedJoint></gazebo>
+  <gazebo reference="lidar_joint"><preserveFixedJoint>true</preserveFixedJoint></gazebo>
+
   <gazebo reference="imu_link">
     <sensor name="imu_sensor" type="imu">
       <always_on>true</always_on>
-      <update_rate>50</update_rate>
+      <update_rate>100</update_rate>
       <visualize>true</visualize>
-      <topic>imu/data</topic>
-    </sensor>
+      <topic>imu</topic>
+      <gz_frame_id>imu_link</gz_frame_id>
+      <imu/> </sensor>
   </gazebo>
 
   <gazebo reference="lidar_link">
-    <sensor name="lidar_sensor" type="gpu_lidar">
+    <sensor name="gpu_lidar" type="gpu_lidar">
+      <always_on>true</always_on>
       <update_rate>10</update_rate>
+      <visualize>true</visualize>
       <topic>scan</topic>
-      <ray>
+      <gz_frame_id>lidar_link</gz_frame_id>
+      <lidar>
         <scan>
           <horizontal>
             <samples>360</samples>
@@ -293,14 +298,25 @@
           <max>10.0</max>
           <resolution>0.01</resolution>
         </range>
-      </ray>
+      </lidar>
     </sensor>
   </gazebo>
-  <gazebo reference="imu_joint">
-    <preserveFixedJoint>true</preserveFixedJoint>
-  </gazebo>
 
-  <gazebo reference="lidar_joint">
-    <preserveFixedJoint>true</preserveFixedJoint>
-  </gazebo>
+  <xacro:macro name="foot_sensor" params="num">
+    <gazebo reference="leg_${num}_foot">
+      <sensor name="leg_${num}_contact" type="contact">
+        <always_on>true</always_on>
+        <update_rate>50</update_rate>
+        <topic>leg_${num}_contact</topic>
+        <gz_frame_id>leg_${num}_foot</gz_frame_id>
+        <contact>
+          <collision>leg_${num}_foot_collision</collision>
+        </contact>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:foot_sensor num="1"/><xacro:foot_sensor num="2"/><xacro:foot_sensor num="3"/>
+  <xacro:foot_sensor num="4"/><xacro:foot_sensor num="5"/><xacro:foot_sensor num="6"/>
+
 </robot>
