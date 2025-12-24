@@ -12,7 +12,7 @@ def generate_launch_description():
     parameters_file = PathJoinSubstitution([pkg_share, 'config', 'parameters.yaml'])
 
     gazebo = ExecuteProcess(
-        cmd=['gz', 'sim', '-s', '-r', 'empty.sdf'],
+        cmd=['gz', 'sim', '-r', 'empty.sdf'],
         output='screen'
     )
     
@@ -40,7 +40,6 @@ def generate_launch_description():
         output='screen'
     )
 
-    # Spawners remain the same
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner',

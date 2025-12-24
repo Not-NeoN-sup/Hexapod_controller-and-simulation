@@ -1,7 +1,0 @@
-<gazebo>
-    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
-      <render_engine>ogre</render_engine>
-    </plugin>
-    <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu">
-    </plugin>
-</gazebo>
