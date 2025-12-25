@@ -34,7 +34,7 @@ source install/setup.bash
 #to open the program
 ros2 launch hexapod_ws main.launch.py
 ```
--in another terminal
+In another terminal
 ```bash
 source install/setup.bash
 
