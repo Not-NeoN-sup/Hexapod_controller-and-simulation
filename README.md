@@ -16,7 +16,7 @@ NOTE: This code was made and used in UBUNTU 24.04 so it can also have issues bei
 - Gazebo Harmonic for physics & visualization
 - ros2_control integration using position/velocity controllers
 - URDF + Xacro robot description
-- IMU, LiDAR, and touch sensors (WIP)
+- IMU, LiDAR, and touch sensors
 - Custom walking controller node
 ## Getting Started
 ```bash
@@ -31,15 +31,17 @@ rosdep install --from-paths src -y --ignore-src
 colcon build
 source install/setup.bash
 
-#to only launch gazebo and view urdf
-ros2 launch hexapod_ws gazebo.launch.py
+#to open the program
+ros2 launch hexapod_ws main.launch.py
+```
+In another terminal
+```bash
+source install/setup.bash
 
-#to see the movement 
-ros2 launch hexapod_ws hexapod_movement.launch.py
+ros2 run hexapod_ws teleop_hexapod.py
 ```
 ## Roadmap
 - improve the movement
 - implement gait patterns (tripod, ripple, wave)
 - Obstacle-aware walking
-- Complete sensor integration
 - more will be added later

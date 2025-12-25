@@ -49,7 +49,7 @@ class HexapodMover(Node):
         self.declare_parameter("body_height", 0.12)
         self.declare_parameter("coxa_len", 0.05)
         self.declare_parameter("femur_len", 0.12)
-        self.declare_parameter("tibia_len", 0.18)
+        self.declare_parameter("tibia_len", 0.09)
         self.declare_parameter("y_offset_side", 0.10)
         self.declare_parameter("STAND_ANGLES", [0.0, -0.5, 1.4])
         self.declare_parameter("FORWARD_OFFSET", 30.0)
@@ -200,7 +200,7 @@ class HexapodMover(Node):
         )
 
         self.walking = False
-        self.get_logger().info("Full step cycle complete.")
+        self.get_logger().info("✅ Full step cycle complete.")
 
     def strafe(self, direction="right", total_steps=100):
         Z_MAX_LIFT = self.HOME_Z + self.lift_h

@@ -13,6 +13,9 @@ __pycache__/
 dist/
 *.egg
 
+#raw urdf file
+*.urdf
+
 # C++
 *.o
 *.so
