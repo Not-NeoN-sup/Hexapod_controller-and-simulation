@@ -17,15 +17,15 @@ class HexapodStableMover(Node):
         self.pub = self.create_publisher(Float64MultiArray, self.topic, 10)
         self.cmd_sub = self.create_subscription(Twist, '/cmd_vel', self.cmd_vel_callback, 10)
         
-        # Initialize positions
+
         self.current_leg_positions = {name: (self.HOME_X, self.HOME_Y, self.HOME_Z) for name in self.LEG_NAMES}
         
         self.get_logger().info("Grounded Smooth Controller Active. Ensuring 6-leg contact...")
 
     def _declare_parameters(self):
         self.declare_parameter("topic", "/hexapod_controller/commands")
-        self.declare_parameter("step_length", 0.06) # Slightly shorter for better balance
-        self.declare_parameter("lift_height", 0.09) # Slightly higher for clear floor separation
+        self.declare_parameter("step_length", 0.06) 
+        self.declare_parameter("lift_height", 0.09) 
         self.declare_parameter("coxa_len", 0.05)
         self.declare_parameter("femur_len", 0.12)
         self.declare_parameter("tibia_len", 0.18)
@@ -38,13 +38,12 @@ class HexapodStableMover(Node):
         self.tibia = self.get_parameter("tibia_len").value
         self.topic = self.get_parameter("topic").value
         
-        # Calculate Home (Standard Standing Position)
         t1, t2, t3 = 0.0, -0.5, 1.4
         r = self.coxa + self.femur * np.cos(t2) + self.tibia * np.cos(t2 + t3)
         self.HOME_X, self.HOME_Y, self.HOME_Z = r, 0.0, self.femur * np.sin(t2) + self.tibia * np.sin(t2 + t3)
         
         self.total_gait_steps = 40 
-        self.stance_wait = 0.08 # Essential "Grounding" time in seconds
+        self.stance_wait = 0.08 
 
     def _initialize_leg_geometry(self):
         self.LEG_NAMES = ["leg1", "leg2", "leg3", "leg4", "leg5", "leg6"]
@@ -75,23 +74,21 @@ class HexapodStableMover(Node):
 
     def execute_gait(self, move_func):
         """Wrapper that executes motion then grounds the robot"""
-        # 1. Swing Phase
+
         for i in range(self.total_gait_steps):
             s = (1.0 - np.cos(np.pi * i / (self.total_gait_steps - 1))) / 2.0
             move_func(s)
             self.publish_current()
             time.sleep(0.01)
 
-        # 2. Grounding Phase (CRITICAL: Forces all legs to floor)
         for name in self.LEG_NAMES:
             self.current_leg_positions[name] = (self.HOME_X, self.HOME_Y, self.HOME_Z)
         self.publish_current()
-        time.sleep(self.stance_wait) # Wait for physics to settle
+        time.sleep(self.stance_wait) 
 
-        # 3. Swap Groups
+
         self.current_swing_group = self.SWING_B if self.current_swing_group == self.SWING_A else self.SWING_A
 
-    # --- GAIT LOGIC BLOCKS ---
 
     def walk_logic(self, s, direction):
         dist = self.step_len * direction
@@ -104,7 +101,7 @@ class HexapodStableMover(Node):
             self.current_leg_positions[name] = (self.HOME_X + radial * np.sin(angle), self.HOME_Y + radial * np.cos(angle), self.HOME_Z + z_off)
 
     def strafe_logic(self, s, direction):
-        side = self.step_len if direction == "right" else -self.step_len
+        side = self.step_len if direction == "left" else -self.step_len
         curr_tang = (side / 2) - (side * s)
         for name in self.LEG_NAMES:
             angle = self.LEG_ANGLES[name]
@@ -114,7 +111,7 @@ class HexapodStableMover(Node):
             self.current_leg_positions[name] = (self.HOME_X - tang * np.cos(angle), self.HOME_Y + tang * np.sin(angle), self.HOME_Z + z_off)
 
     def turn_logic(self, s, direction):
-        sweep = self.step_len if direction == "left" else -self.step_len
+        sweep = self.step_len if direction == "right" else -self.step_len
         curr_y = (sweep / 2) - (sweep * s)
         for name in self.LEG_NAMES:
             is_swing = name in self.current_swing_group
