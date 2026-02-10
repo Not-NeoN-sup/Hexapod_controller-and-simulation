@@ -20,7 +20,7 @@ install(
 )
 install(
   PROGRAMS
-    scripts/hexapod_runner.py scripts/teleop_hexapod.py
+    scripts/hexapod_runner.py scripts/teleop_hexapod.py scripts/contact_dummy.py scripts/leg_plotter.py scripts/hexapod_bender.py
   DESTINATION lib/${PROJECT_NAME}
 )
 install(
