@@ -40,6 +40,11 @@ source install/setup.bash
 
 ros2 run hexapod_ws teleop_hexapod.py
 ```
+Added Force sensors as contact sensor substitutes (works fine for now)
+```bash
+#to use the contact sensor run in new terminal
+ros2 run hexapod_ws contact_dummy.py
+```
 ## Roadmap
 - improve the movement
 - implement gait patterns (tripod, ripple, wave)
